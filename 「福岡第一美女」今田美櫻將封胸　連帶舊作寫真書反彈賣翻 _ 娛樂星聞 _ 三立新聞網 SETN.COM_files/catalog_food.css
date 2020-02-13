@@ -1,0 +1,313 @@
+﻿@charset "utf-8";
+/*手風琴折-吃喝玩樂*/
+.sv4 {
+	width: 300px;
+	border: 0px solid #BFC7D9;
+	height: 661px;
+	clear: both;
+	overflow: hidden;
+	background-color: #CCC;
+    margin-top:12px;
+} 
+
+
+.sv4 dl {
+	width: 298px;
+	height: 156px;
+	overflow: hidden;
+	background-color: #FFFFFF;
+	border-right-width: 1px;
+	border-left-width: 1px;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #ccc;
+	border-left-color: #ccc;
+} 
+.sv4 dt {
+	/* [disabled]height: 40px; */
+	font-size: 13px;
+	color: #54000F;
+	background-color: #FFEBDD;
+	background-image: url(../images/bookclose.png);
+	background-repeat: no-repeat;
+	background-position: 10px 11px;
+	padding-top: 7px;
+	padding-bottom: 5px;
+	padding-left: 30px;
+	line-height: 1.6em;
+	border-top-width: 1px;
+	border-right-width: 0px;
+	border-bottom-width: 1px;
+	border-left-width: 0px;
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #FFF;
+	border-bottom-color: #BFC7D9;
+	overflow: hidden;
+	/* [disabled]white-space: nowrap; */
+	text-overflow: ellipsis;
+	padding-right: 5px;
+} 
+.sv4 dl.on dt {
+	color: #FFF;
+	/* [disabled]font-weight: bold; */
+	background-color: #B3471A;
+	background-image: url(../images/bookopen.png);
+	background-repeat: no-repeat;
+	background-position: 10px;
+} 
+.sv4 dd {
+	font-size: 13px;
+	line-height: 1.7em;
+	width: 100%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	overflow: hidden;
+	text-align: justify;
+} 
+#idSlideView4 dd:hover {
+	/* [disabled]background-color: #2055C4; */
+	/* [disabled]color: #FFF; */
+}
+#idSlideView4 dd:hover p{
+	/* [disabled]background-color: #2055C4; */
+	/* [disabled]color: #FFF; */
+}
+
+
+.sv4 dd a {
+	text-decoration: none;
+	height: 100%;
+	width: 100%;
+	display: block;
+	border-top-width: 0px;
+	border-right-width: 0px;
+	border-bottom-width: 0px;
+	border-left-width: 0px;
+}
+
+
+
+.sv4 dd h4 {
+	color: #333;
+	font-size: 15px;
+	line-height: 1.5em;
+}
+
+.sv4 dd img {
+	border-top-width: 0px;
+	border-right-width: 0px;
+	border-bottom-width: 0px;
+	border-left-width: 0px;
+	float: left;
+}
+.sv4 dd p {
+	/* [disabled]float: left; */
+	text-align: justify;
+	width: 280px;
+}
+
+
+.sv4 dd a:link, 
+.sv4 dd a:visited, 
+.sv4 dd a:hover, 
+.sv4 dd a:active {
+	display: block;
+	text-align: right;
+}
+.titleh3br {
+	font-size: 16px;
+	color: #FFF;
+	padding-left: 11px;
+	padding-top: 8px;
+	letter-spacing: 1px;
+	font-weight: normal;
+	padding-bottom: 8px;
+	background-image: url(../images/hf300.jpg);
+	background-repeat: no-repeat;
+}
+
+/*熱門-三則輪播*/
+.rollBox{
+	width: 650px;
+	overflow: hidden;
+	background-image: url(../images/hr650.jpg);
+	background-repeat: no-repeat;
+	border-right-width: 0px;
+	border-bottom-width: 8px;
+	border-left-width: 0px;
+	border-right-style: none;
+	border-bottom-style: solid;
+	border-left-style: none;
+	border-bottom-color: #B60000;
+	margin-bottom: 18px;
+	border-top-width: 0px;
+	border-top-style: none;
+	border-top-color: #B60000;
+} 
+.rollBox .LeftBotton{
+	height: 176px;
+	width: 20px;
+	overflow: hidden;
+	float: left;
+	display: inline;
+	cursor: pointer;
+	background-image: url(../images/icon/arrow-left.gif);
+	background-repeat: no-repeat;
+	background-position: -29px center;
+	/* [disabled]margin-top: 25px; */
+	margin-right: 0;
+	margin-bottom: 0;
+	margin-left: 0;
+	background-color: #B60000;
+} 
+.rollBox .RightBotton{
+	height: 176px;
+	width: 20px;
+	overflow: hidden;
+	float: left;
+	display: inline;
+	/* [disabled]margin: 25px 0 0 0; */
+	cursor: pointer;
+	background-color: #B60000;
+	background-image: url(../images/icon/arrow-right.gif);
+	background-repeat: no-repeat;
+	background-position: 0px center;
+} 
+.rollBox .Cont{
+	width: 605px;
+	overflow: hidden;
+	float: left;
+	padding-left: 5px;
+	padding-top: 7px;
+} 
+.rollBox .ScrCont{width:10000000px;} 
+.rollBox .Cont .pic{
+	width: 200px;
+	float: left;
+	text-align: left;
+} 
+.rollBox .Cont .pic img{
+	padding: 4px;
+	border: 1px solid #aaa;
+	display: block;
+	margin: 0 auto;
+	background-color: #fff;
+} 
+.rollBox .Cont .pic p{
+	line-height: 1.3em;
+	color: #555;
+	font-size: 15px;
+	/* [disabled]font-weight: bold; */
+	padding-right: 4px;
+	padding-left: 10px;
+	height: 40px;
+	overflow: hidden;
+} 
+.rollBox .Cont .pic p span {
+	color: #333333;
+	font-size: 13px;
+	padding-right: 5px;
+}
+.rollBox .Cont a:link,.rollBox .Cont a:visited{
+	/* [disabled]color:#626466; */
+	text-decoration: none;
+} 
+.rollBox #List1,.rollBox #List2{float:left;} 
+.rollBox h2 {
+	font-size: 16px;
+	color: #FFF;
+	padding-top: 7px;
+	padding-bottom: 8px;
+	padding-left: 10px;
+	letter-spacing: 1px;
+	font-weight: normal;
+}
+
+/*QA看更多>>*/
+.qamost h6  {
+	float: right;
+	font-size: 13px;
+	font-weight: normal;
+	letter-spacing: 1px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+#conRt .qamost h6 a{
+	color: #B60000;
+	text-decoration: none;
+}
+#conRt .qamost h6 a:hover {
+	text-decoration: underline;
+}
+.qasearch {
+	text-align: center;
+	background-color: #245FD9;
+	border-radius: 6px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	margin-top: 24px;
+	margin-right: 73px;
+	margin-bottom: 30px;
+	margin-left: 73px;
+	overflow: hidden;
+}
+.qasearch #keywd {
+	width: 200px;
+	margin-right: 5px;
+	float: left;
+}
+.qasearch #sah {
+	float: left;
+}
+
+.qasearch h4 {
+	float: left;
+	font-weight: normal;
+	padding-left: 90px;
+	color: #FFF;
+	font-size: 15px;
+	letter-spacing: 1px;
+	margin-right: 10px;
+	margin-top: 3px;
+}
+
+
+/*QA列表頁-10則*/
+.package1 .qali {
+	overflow: hidden;
+}
+.package1 .qali li {
+	height: 120px;
+	border-bottom-width: 0px;
+	overflow: hidden;
+	list-style-type: none;
+	margin-bottom: 15px;
+	margin-top: 4px;
+}
+.package1 .qali li img  {
+	border: 0px none #FFF;
+	float: left;
+	margin-right: 8px;
+	height: 100px;
+	width: 150px;
+}
+.package1 .qali li p {
+	font-size: 15px;
+	float: left;
+	width: 454px;
+	height: 72px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.package1 .qali h3 {
+	color: #333;
+	font-size: 16px;
+	width: 618px;
+}
+
+.package1 .qali h3 span {
+	color: #C00;
+	font-size: 15px;
+}

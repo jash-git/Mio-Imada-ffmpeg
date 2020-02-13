@@ -1,0 +1,89 @@
+﻿$(function () {
+    $('.cover_right_ul li').eq(0).css({ 'font-size': '1.3em', 'padding-left': 5 });
+
+    action_cover_banner();
+
+    $(window).scroll(function () {
+        clearTimeout(idleAdInterval);
+        action_cover_banner();
+    });
+
+    $('body,.banner_cover_close,.banner_cover_null').click(function () {
+        $('.banner_cover_block,.banner_cover_null').hide();
+        clearTimeout(idleAdInterval);
+        action_cover_banner();
+        if ($('#videoDFP').length > 0) {
+            var video = document.getElementById('videoDFP');
+            video.pause();
+        }
+    });
+});
+
+var action_cover_banner = function () {
+
+
+    try {
+        if (clickPlay != null) {
+            if (clickPlay == false) {
+                return;
+            }
+        }
+    }
+    catch (e) {
+    }
+
+
+
+    idleSecond = parseInt(idleSecond, 10);
+    idleAdInterval = setTimeout(function () {
+
+        $('#idleAD').modal('show');
+        //$('.banner_cover_block,.banner_cover_null').show()
+        //熱門
+        //if ($('.recommendation_ul').html().length === 0) {
+        //    var dt = AjaxGetData('/Extensions/SetMainServices.asmx/GetHotNews', '{"newsID":"0","pageGroupID":"1"}', false, false, null);
+        //    if (dt && dt.length >= 2) {
+        //        $('.recommendation_ul').html('<li>' +
+        //                                    '   <ul>' +
+        //                                    '    	<li class="recommendation_left">熱門</li>' +
+        //                                    '       <li class="recommendation_right"><a class="gt" pa="新聞內頁" pl="閒置廣告" href="/News.aspx?NewsID=' + dt[0].NewsID + '" lb="' + dt[0].ShortSlug + '">' + dt[0].ShortSlug + '</a></li>' +
+        //                                    '    </ul>' +
+        //                                    '</li>' +
+        //                                    '<li>' +
+        //                                    '	<ul>' +
+        //                                    '    	<li class="recommendation_left">熱門</li>' +
+        //                                    '       <li class="recommendation_right"><a class="gt" pa="新聞內頁" pl="閒置廣告" href="/News.aspx?NewsID=' + dt[1].NewsID + '" lb="' + dt[1].ShortSlug + '">' + dt[1].ShortSlug + '</a></li>' +
+        //                                    '    </ul>' +
+        //                                    '</li>');
+        //    }
+        //}
+        //即時新聞 *5 第一則有圖
+        if ($('.cover_right_ul').html().length === 0) {
+            var dt = AjaxGetData('/Extensions/SetMainServices.asmx/GetViewAll', '{"newsID":"0"}', false, false, null);
+            if (dt && dt.length > 0) {
+                var str = '';
+                for (var i = 0; i < dt.length; i++) {
+                    var vo = dt[i];
+                    str += '<li>';
+                    var firstli_class = '';
+                    if (i === 0) {
+                        str += '<a href="/News.aspx?NewsID=' + vo.NewsID + '"><img src="' + GetImageURL(vo.Image.ImageID, vo.Image.ImageFile, "S") + '"></a>';
+                        firstli_class = ' first_bold';
+                    }
+                    str += '<a class="gt' + firstli_class + '" pa="新聞內頁" pl="閒置廣告" href="/News.aspx?NewsID=' + vo.NewsID + '" lb="' + vo.ShortSlug + '">' + vo.ShortSlug + '</a></li>'
+                }
+                $('.cover_right_ul').html(str);
+            }
+
+            //加廣告
+            b_ad_paras = [
+                    //{ plate: '/21685920852/setnews_m_320x480_News', size: [[300, 250], [320, 480]], id: 'div-gpt-ad-1431316537178-0', area: 'banner_cover_left', marginTop: 0 },
+                    { plate: '/21685920852/setn_idleAd_300x250', size: [300, 250], id: 'div-gpt-ad-1431316537178-0', area: 'banner_cover_left', marginTop: 0 },
+                    //{ plate: '/21685920852/setn_idleAd_728x90', size: [728, 90], id: 'div-gpt-ad-1431316537178-1', area: 'banner_cover_bottom', marginTop: 0 }
+            ];
+            GoogleADExecute(b_ad_paras);
+
+            //GetDfpVideoAd('banner_cover_left', 300, 250, true);
+        }
+    }, idleSecond * 1000);
+};

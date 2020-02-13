@@ -1,0 +1,334 @@
+﻿InnityVideo = function(eid, video, logger) {
+	this.video = video;
+	this.video.eid = eid;
+	this.video.view = false;
+	this.video.started = false;
+	this.video.playing = false;
+	this.video.finished= false;
+	this.video.played_25 = false;
+	this.video.played_50 = false;
+	this.video.played_75 = false;
+	this.video.logger = logger;
+	this.video.mute = this.video.defaultMuted;
+	this.video.addEventListener("play", this.videoHandler, false);
+	this.video.addEventListener("pause", this.videoHandler, false);
+	this.video.addEventListener("ended", this.videoHandler, false);
+	this.video.addEventListener("timeupdate", this.onTimeupdate, false);
+	this.video.addEventListener("volumechange", this.onVolumechange, false);
+	this.video.addEventListener('fullscreenchange', this.onFullscreenChange, false);
+	this.video.addEventListener('webkitfullscreenchange', this.onFullscreenChange, false);
+	document.addEventListener('mozfullscreenchange', this.onFullscreenChange, false);
+	document.addEventListener('MSFullscreenChange', this.onFullscreenChange, false);
+	this.video.pm = function(msg, target) {
+		try {
+			parent.postMessage(msg, target);
+		}catch(e) {}
+	}
+	try {
+		console.log("Video obj:" + video.id + ", id:" + eid + ", registered to logger: " + logger);
+	}catch(e) {}
+}
+InnityVideo.prototype.videoHandler = function(e) {
+	if(this.started && e.type == "pause" && this.currentTime < this.duration) {
+		this.logger.log(this.eid, "p");
+		this.logger.log(this.eid + "_Pause", "c");
+		this.logger.log(this.eid + "_Audio", "p");
+		this.pm("interaction|" + this.eid + ",p", "*");
+		this.pm("interaction|" + this.eid + "_Pause,c", "*");
+		this.pm("interaction|" + this.eid + "_Audio,p", "*");
+		this.playing = false;
+	}
+	if(this.started && e.type == "play") {
+		this.logger.log(this.eid, "r");
+		this.logger.log(this.eid + "_Play", "c");
+		this.pm("interaction|" + this.eid + ",r", "*");
+		this.pm("interaction|" + this.eid + "_Play,c", "*");
+		if(this.volume > 0 && !this.mute) {
+			this.logger.log(this.eid + "_Audio", "s");
+			this.pm("interaction|" + this.eid + "_Audio,s", "*");
+		}
+		this.playing = true;
+	}
+	if(e.type == "play") {
+		if(this.finished) {
+			this.logger.log(this.eid + "_Replay", "c");
+			this.pm("interaction|" + this.eid + "_Replay,c", "*");
+			this.finished = false;
+		}
+	}
+	if(e.type == "ended") {
+		this.logger.log(this.eid, "f");
+		this.pm("interaction|" + this.eid + ",f", "*");
+		if(this.volume > 0 && !this.mute) {
+			this.logger.log(this.eid + "_Audio", "f");
+			this.pm("interaction|" + this.eid + "_Audio,f", "*");
+		}
+		this.started = false;
+		this.playing = false;
+		this.finished= true;
+		this.played_25 = false;
+		this.played_50 = false;
+		this.played_75 = false;
+		this.pm(InnityHTMLAd.trackingId + "_videoEnded", "*");
+		this.pm("interaction|" + this.eid + "_100,c", "*");
+	}
+}
+InnityVideo.prototype.onTimeupdate = function() {
+	if(this.currentTime >= 0 && !this.view) {
+		this.view = true;
+		this.pm("interaction|" + this.eid + "_00,c", "*");
+	}
+	if(this.currentTime > 0 && !this.started) {
+		if(this.volume > 0 && !this.mute) {
+			this.logger.log(this.eid + "_Audio", "s");
+			this.pm("interaction|" + this.eid + "_Audio,s", "*");
+		}
+		this.started = true;
+		this.playing = true;
+		this.logger.log(this.eid, "s");
+		this.pm("interaction|" + this.eid + ",s", "*");
+	}
+	if(this.currentTime > (this.duration * 0.25) && !this.played_25) {
+		this.played_25 = true;
+		this.logger.log(this.eid + "_25", "c");
+		this.pm("interaction|" + this.eid + "_25,c", "*");
+	}
+	if(this.currentTime > (this.duration * 0.5) && !this.played_50) {
+		this.played_50 = true;
+		this.logger.log(this.eid + "_50", "c");
+		this.pm("interaction|" + this.eid + "_50,c", "*");
+	}
+	if(this.currentTime > (this.duration * 0.75) && !this.played_75) {
+		this.played_75 = true;
+		this.logger.log(this.eid + "_75", "c");
+		this.pm("interaction|" + this.eid + "_75,c", "*");
+	}
+	this.pm(InnityHTMLAd.id + "_current_time|" + Math.ceil(this.currentTime), "*");
+}
+InnityVideo.prototype.onVolumechange = function() {
+	if(this.muted) {
+		this.mute = true;
+		this.logger.log(this.eid + "_Mute", "c");
+		this.pm("interaction|" + this.eid + "_Mute,c", "*");
+		if(this.playing) {
+			this.logger.log(this.eid + "_Audio", "p");
+			this.pm("interaction|" + this.eid + "_Audio,p", "*");
+		}
+	}
+	if(this.mute && !this.muted && this.volume > 0) {
+		this.mute = false;
+		this.logger.log(this.eid + "_Unmute", "c");
+		this.pm("interaction|" + this.eid + "_Unmute,c", "*");
+		if(this.playing) {
+			this.logger.log(this.eid + "_Audio", "s");
+			this.pm("interaction|" + this.eid + "_Audio,s", "*");
+		}
+	}
+}
+InnityVideo.prototype.onFullscreenChange = function() {
+	this.pm(InnityHTMLAd.id + "_fullscreenChange", "*");
+}
+var InnityHTMLAd = {
+	"id" : "test",
+	"host" : "http://",
+	"urls" : [],
+	"vids" : [],
+	"dco" : "",
+	"cb" : new Date().getTime(),
+	"init" : function() {
+		if(this.initOnLoad) {
+			this.InnityAd = new InnityAd(this.trackingId, this.host, {
+				"pid" : auth_262255,
+				"autostart" : this.autostart,
+				"intervalTracking" : InnityHTMLAd.intervalTracking
+			});
+		}
+		var self = this;
+		self.isReady = false;
+		self.isLoaded = false;
+		function _setAdReady() {
+			if(!self.isReady) {
+				self.setAdReady();
+				self.isReady = true;
+			}
+		}
+		function _setAdLoaded() {
+			if(!self.isLoaded) {
+				self.setAdLoaded();
+				self.isLoaded = true;
+			}
+		}
+		try {
+			window.addEventListener("DOMContentLoaded", _setAdReady, false);
+			window.addEventListener("load", _setAdReady, false);
+			window.addEventListener("load", _setAdLoaded, false);
+		}catch(e) {}
+		window.addEventListener("message", this.messageHandler, false);
+		window.addEventListener("resize", this.resizeHandler, false);	
+	},
+	"track" : function(event) {
+		this.InnityAd.log(event, "c");
+		this.pm("interaction|" + event + ",c", "*");
+	},
+	"startTimer" : function(event) {
+		this.InnityAd.log(event, "s");
+		this.pm("interaction|" + event + ",s", "*");
+	},
+	"stopTimer" : function(event) {
+		this.InnityAd.log(event, "p");
+		this.pm("interaction|" + event + ",p", "*");
+	},
+	"resumeTimer" : function(event) {
+		this.InnityAd.log(event, "r");
+		this.pm("interaction|" + event + ",r", "*");
+	},
+	"attachVideo" : function(obj) {
+		this.vids.push(obj);
+		this.InnityVideo = new InnityVideo("_Video" + this.vids.length, obj, this.InnityAd);
+	},
+	"endVideo" : function(event) {
+		this.InnityAd.log(event, "f");
+		this.pm("interaction|" + event + ",f", "*");
+		this.pm(this.id + "_videoEnded", "*");
+	},
+	"impact" : function() {
+		this.pm(this.id + "_impact", "*");
+	},
+	"expand" : function() {
+		this.pm(this.id + "_expand", "*");
+	},
+	"expanded" : function() {
+		if(!this.initOnLoad) {
+			this.InnityAd = new InnityAd(this.trackingId, this.host, {
+				"pid" : auth_262255,
+				"autostart" : true,
+				"intervalTracking" : InnityHTMLAd.intervalTracking
+			});
+		}
+		this.pm(this.id + "_expanded", "*");
+	},
+	"subExpand" : function() {
+		this.pm(this.id + "_subExpand", "*");
+	},
+	"subExpanded" : function() {
+		this.pm(this.id + "_subExpanded", "*");
+	},
+	"subShrink" : function() {
+		this.pm(this.id + "_subShrink", "*");
+	},
+	"subShrinked" : function() {
+		this.pm(this.id + "_subShrinked", "*");
+	},
+	"shrink" : function() {
+		this.pm(this.id + "_shrink", "*");
+	},
+	"shrinked" : function() {
+		this.pm(this.id + "_shrinked", "*");
+	},
+	"clearRM" : function() {
+		this.InnityAd.clear();
+	},
+	"close" : function() {
+		this.pm(this.id + "_close", "*");
+	},
+	"closed" : function() {
+		this.pm(this.id + "_closed", "*");
+	},
+	"click" : function(options) {
+		if(typeof options == "object") {
+			if(typeof options.clickTAG != "undefined" && typeof this.urls[options.clickTAG] != "undefined") {
+				var lnk = this.dco != "" ? this.urls[options.clickTAG] + "&type=" + this.dco : this.urls[options.clickTAG];
+			} else if(typeof options.url == "string") {
+				var lnk = this.cBeacon + encodeURIComponent(options.url);
+			}
+		}else if(typeof options == "string") {
+			if(typeof this.urls[options] != "undefined") {
+				var lnk = this.dco != "" ? this.urls[options] + "&type=" + this.dco : this.urls[options];
+			}
+		}
+		if(typeof lnk != "undefined" && lnk != "") {
+			window.open(lnk);
+			this.pm(this.id + "_click", "*");
+		} else {
+			this.trace(options);
+		}
+	},
+	"setAdReady" : function() {
+		this.pm(this.id + "_adReady", "*");
+	},
+	"setAdLoaded" : function() {
+		this.pm(this.id + "_adLoaded", "*");
+	},
+	"setDCO" : function(dco) {
+		this.dco = dco;
+		var data = this.host + "/dco/?c=" + this.id.split("c")[1] + "&d=" + dco + "&cb=" + this.cb;
+		this.dispatch(data);
+	},
+	"getParam" : function(param) {
+		return decodeURIComponent((new RegExp("[?|&]" + param + "=" + "([^&;]+?)(&|#|;|$)").exec(self.location.href)||[,""])[1].replace(/\+/g, "%20"))||"";
+	},
+	"dispatch" : function(data) {
+		if(data instanceof Array){
+			for (var i = 0; i < data.length; i++) {
+				(new Image()).src = data[i];
+			}
+		}else{
+			(new Image()).src = data;
+		}
+	},
+	"trace" : function(msg) {
+		try {
+			console.log(msg);
+		}catch(e) {}
+	},
+	"pm" : function(msg, target) {
+		try {
+			parent.postMessage(msg, target);
+		}catch(e) {}
+	},
+	"messageHandler" : function(event) {
+		if(event.data == "c262255_closeAd") {
+			// Clear ad body to mute all audio
+			document.getElementsByTagName("body")[0].innerHTML = "";
+			setTimeout(function(){
+				// Clear Rich Media queue
+				InnityHTMLAd.clearRM();
+			}, 50);
+		}
+	},
+	"resizeHandler" : function(event) {
+		InnityHTMLAd.pm(InnityHTMLAd.id + "_resized["+ document.body.scrollWidth + "x" + document.body.scrollHeight +"]", "*");
+	}
+}
+
+innity_protocol = "https:";
+innity_prem = (typeof innity_prem == "undefined") ? innity_protocol + "//avn.innity.com" : innity_prem;
+innity_adnw = (typeof innity_adnw == "undefined") ? innity_protocol + "//avp.innity.com" : innity_adnw;
+innity_exclk = (typeof innity_exclk == "undefined") ? Math.floor((new Date().getTime() + 86400000) / 1000) : innity_exclk;
+cb_262255 = InnityHTMLAd.cb;
+auth_262255 = (typeof auth_262255 == "undefined")?InnityHTMLAd.getParam("auth"):auth_262255;
+zone_262255 = (typeof zone_262255 == "undefined")?InnityHTMLAd.getParam("zone"):zone_262255;
+pub_262255 = (typeof pub_262255 == "undefined")?InnityHTMLAd.getParam("pub"):pub_262255;
+ref_262255 = encodeURIComponent((typeof ref_262255 == "undefined")?InnityHTMLAd.getParam("ref"):ref_262255);
+pcu_262255 = encodeURIComponent((typeof pcu_262255 == "undefined")?InnityHTMLAd.getParam("pcu"):pcu_262255);
+country_262255 = encodeURIComponent((typeof country_262255 == "undefined")?InnityHTMLAd.getParam("country"):country_262255);
+
+InnityHTMLAd.id = "c262255";
+InnityHTMLAd.trackingId = "c262255";
+InnityHTMLAd.auth = auth_262255;
+InnityHTMLAd.zoneid = zone_262255;
+InnityHTMLAd.pubid = pub_262255; 
+InnityHTMLAd.ref = ref_262255;
+InnityHTMLAd.pcu = pcu_262255;
+InnityHTMLAd.campaignId = "30446";
+InnityHTMLAd.campaignCountry = country_262255;
+InnityHTMLAd.adid = "262255";
+InnityHTMLAd.adTrackingId = "262255";
+InnityHTMLAd.trackingDomain = innity_adnw;
+InnityHTMLAd.host = "https://cast.innity.com";
+InnityHTMLAd.autostart = false;
+InnityHTMLAd.intervalTracking = true;
+InnityHTMLAd.initOnLoad= true;
+InnityHTMLAd.init();
+InnityHTMLAd.cBeacon = InnityHTMLAd.trackingDomain + "/click/?campaignid=30446&adid=262255&zoneid=" + InnityHTMLAd.zoneid + "&pubid=" + InnityHTMLAd.pubid + "&cb=" + InnityHTMLAd.cb + "&ex=" + innity_exclk + "&pcu=" + InnityHTMLAd.pcu + "&auth=" + InnityHTMLAd.auth + "&ref=" + InnityHTMLAd.ref + "&url=";
+InnityHTMLAd.urls["clickTAG"] = InnityHTMLAd.trackingDomain + "/click/?campaignid=30446&adid=262255&zoneid=" + InnityHTMLAd.zoneid + "&pubid=" + InnityHTMLAd.pubid + "&cb=" + InnityHTMLAd.cb + "&ex=" + innity_exclk + "&pcu=" + InnityHTMLAd.pcu + "&auth=" + InnityHTMLAd.auth + "&ref=" + InnityHTMLAd.ref + "&url=";

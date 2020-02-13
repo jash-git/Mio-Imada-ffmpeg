@@ -1,0 +1,148 @@
+var pageQueryStrObj = { catalog: ["pagegroupid"], photocatalog: ["projecttype"], catalog_column: ["subcateid"], plist: ["pagegroupid", "ptype"], videos: ["pagegroupid"] };
+
+var _uriPath = location.pathname.toLocaleLowerCase();
+var _uriQuery = location.search.toLocaleLowerCase();
+
+try {
+    if (_uriPath.indexOf("/klist.aspx") > -1) {
+        _uriPath = _uriPath.replace("klist.aspx", "plist.aspx");
+        if (ProjectPGID !== null) {
+            _uriQuery = "?pagegroupid=" + ProjectPGID;
+        }
+    }
+} catch (e) {
+
+}
+
+if (_uriPath.indexOf("/photos.aspx") > -1) {
+    _uriPath = _uriPath.replace("photos.aspx","photocatalog.aspx");
+    if (PhotoProjectType !== null) {
+        _uriQuery = "?projecttype=" + PhotoProjectType;
+    }
+}
+if (_uriPath.indexOf("/column.aspx") > -1) {
+    _uriPath = _uriPath.replace("column.aspx", "catalog_column.aspx");
+    if (SubCateID !== null) {
+        _uriQuery = "?subcateid=" + SubCateID;
+    }
+}
+
+var _uriPathName = _uriPath.replace("/m/", "").replace("/", "").replace(".aspx", "");
+
+
+var $_MenuLayer = document.getElementsByClassName("MenuList");
+
+var $_navSubItem = document.getElementsByClassName("subMenuItem");
+
+for (var i = $_MenuLayer.length - 1; i >= 0; i--) {
+    var $_activeNav = $_MenuLayer[i].getElementsByClassName("active");
+    if ($_activeNav.length > 0) {
+        break;
+    }
+
+    for (var x = 0; x < $_MenuLayer[i].children.length; x++) {
+
+        var _navHref = $_MenuLayer[i].children[x].getElementsByTagName("a")[0].getAttribute("href").toLocaleLowerCase();
+
+        if ((_uriPath + _uriQuery == _navHref) || NavActiveCheck(_navHref)) {
+            AddActiveInNav($_MenuLayer[i], x);
+            break;
+        }
+    }
+
+}
+
+for (var i = $_MenuLayer.length - 1; i >= 0; i--) {
+    var $_activeNav = $_MenuLayer[i].getElementsByClassName("active");
+    if ($_activeNav.length > 0) {
+        break;
+    }
+
+    for (var x = 0; x < $_MenuLayer[i].children.length; x++) {
+
+        var _navHref = $_MenuLayer[i].children[x].getElementsByTagName("a")[0].getAttribute("href").toLocaleLowerCase();
+
+        if (i == 0 && _uriPath == _navHref) {
+            AddActiveInNav($_MenuLayer[i], x);
+            break;
+        }
+    }
+
+}
+
+
+function AddActiveInNav($_MenuLayer, x) {
+
+
+
+    $_MenuLayer.children[x].className += " active";
+
+
+    var $_navMainItem = findParentBySelector($_MenuLayer, ".mainMenu");
+    if ($_navMainItem != null) {
+        $_navMainItem.className += " active";
+    }
+
+    var $_subNav = $_MenuLayer.children[x].getElementsByClassName("subMenuItem")[0];
+    if ($_subNav != null) {
+        var _subNavA = $_subNav.getElementsByTagName("a")[0];
+        if (_subNavA.getAttribute("href").toLocaleLowerCase() == _uriPath) {
+            $_subNav.className += " active";
+        }
+    }
+
+    if (!$(".slidemenu").hasClass("openSubNav")) {
+        if ($(".subMenuItem.active").length > 0) {
+            $(".slidemenu").addClass("openSubNav");
+        }
+
+    }
+}
+
+function NavActiveCheck(_navHref) {
+
+    var navHrefArr = _navHref.split("?");
+
+    if (_uriPath != navHrefArr[0] || navHrefArr.length < 2) {
+        return false;
+    }
+
+    var uriqsObj = _uriQuery !== "" ? JSON.parse('{"' + decodeURI(_uriQuery.substring(1)).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}') : [];
+    var navqsObj = JSON.parse('{"' + decodeURI(navHrefArr[1]).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}');
+
+    if (navqsObj == null || uriqsObj == null) {
+        return false;
+    }
+
+
+    if (pageQueryStrObj[_uriPathName] != null) {
+        //var qsLen = pageQueryStrObj[_uriPathName].length;
+        var x = 0;
+
+        for (var i in pageQueryStrObj[_uriPathName]) {
+            var qsName = pageQueryStrObj[_uriPathName][i];
+            if (navqsObj[qsName] == uriqsObj[qsName] && navqsObj[qsName] != null && uriqsObj[qsName] != null) {
+                x++;
+            }
+        }
+
+        if (x > 0) {
+            return true;
+        }
+    }
+}
+
+function collectionHas(a, b) { 
+    for (var i = 0, len = a.length; i < len; i++) {
+        if (a[i] == b) return true;
+    }
+    return false;
+}
+function findParentBySelector(elm, selector) {
+    var all = document.querySelectorAll(selector);
+    var cur = elm.parentNode;
+    while (cur && !collectionHas(all, cur)) {
+        cur = cur.parentNode;
+    }
+    return cur;
+}

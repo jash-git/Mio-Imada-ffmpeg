@@ -1,0 +1,196 @@
+.sidebarMenu {
+    font-family: Arial,'Microsoft JhengHei', sans-serif;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+    .sidebarMenu.active {
+        width: 280px;
+    }
+
+a,
+a:hover {
+    text-decoration: none;
+}
+
+#sidebar-wrapper {
+    position: absolute;
+    right: -100%;
+    width: 90%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.85);
+    -webkit-transition: right 1s;
+    transition: right 1s;
+}
+
+.sidebarMenu.active #sidebar-wrapper {
+    right: 0;
+}
+
+.btnBlock {
+    top: 0.5em;
+    right: 0.5em;
+    position: fixed;
+}
+
+.btn {
+    cursor: pointer;
+    display: block;
+    padding: 0 12px;
+    font-size: 20px;
+    letter-spacing: 3px;
+    line-height: 2em;
+    border-radius: 50px;
+}
+
+    .btn.pull-left::before {
+        content: "";
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 6px 8px 6px 0;
+        border-color: transparent #FFFFFF transparent transparent;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .btn.pull-right::after {
+        content: "";
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 6px 0 6px 8px;
+        border-color: transparent transparent transparent #FFFFFF;
+        display: inline-block;
+        margin-left: 5px;
+    }
+
+.btn-primary {
+    color: #fff;
+    background-color: #ff0079;
+    border: 0;
+    -webkit-box-shadow: 4px 4px 21px 1px #212121;
+    box-shadow: 4px 4px 21px 1px #212121;
+}
+
+    .btn-primary:hover,
+    .btn-primary:active,
+    .btn-primary:focus {
+        background-color: #ca0000;
+    }
+
+.btn-default {
+    background-color: rgba(0, 0, 0, 0);
+    color: rgba(187, 212, 243, 0.95);
+    border: 1px solid rgba(187, 212, 243, 0.95);
+}
+
+    .btn-default:hover,
+    .btn-default:active,
+    .btn-default:focus {
+        color: rgba(250, 250, 250, 0.7);
+        border: 1px solid rgba(250, 250, 250, 0.7);
+    }
+
+
+
+#sidebar-wrapper > div {
+    min-height: 3em
+}
+
+.program-area {
+    margin: 3%;
+    padding: 3% 2% 2% 2%;
+    color: #ffc4a0;
+    font-size: 16px;
+    letter-spacing: 1px;
+    line-height: 1.75em;
+    transition: all 0.4s ease-in 0s;
+    -webkit-transition: all 0.4s ease-in 0s;
+    -moz-transition: all 0.4s ease-in 0s;
+    -ms-transition: all 045s ease-in 0s;
+    -o-transition: all 0.4s ease-in 0s;
+}
+
+    .program-area:hover {
+        opacity: 0.6;
+    }
+
+    .program-area.active,
+    .program-area:active,
+    .program-area:visited {
+        color: #FFF;
+    }
+
+    .program-area > a {
+        display: block;
+        color: #ffc4a0;
+    }
+
+        .program-area > a > *:not(span) {
+            color: #6bceff;
+            font-size: 15px;
+            background-color: transparent;
+        }
+
+    .program-area:not(.program-replay) > a > span {
+        display: block;
+    }
+
+    .program-area time::before {
+        color: #72bce0;
+        content: "\02662";
+        margin-right: 5px;
+        font-weight: 900;
+        font-size: 16px;
+    }
+
+.program-replay {
+    border-top: 1px #212121 solid;
+}
+
+    .program-replay * {
+        color: #ff7800 !important;
+    }
+
+/***************  Scrollbar  *********************************************/
+/* width */
+#sidebar-wrapper::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+#sidebar-wrapper::-webkit-scrollbar-track {
+    background: #333;
+}
+
+/* Handle */
+#sidebar-wrapper::-webkit-scrollbar-thumb {
+    background: #585757;
+}
+
+    /* Handle on hover */
+    #sidebar-wrapper::-webkit-scrollbar-thumb:hover {
+        background: #616060;
+    }
+
+@media only screen and (max-width: 550px) {
+    #sidebar-wrapper {
+        width: 100%;
+    }
+
+    .sidebarMenu.active {
+        width: 100%;
+    }
+
+    .btn {
+        font-size: 15px;
+        padding: 0 10px;
+    }
+}

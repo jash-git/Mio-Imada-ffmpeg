@@ -1,0 +1,5 @@
+ffmpeg -ss 00:00:00 -t 00:08:00 -i "Mio_Imada.mp4" -vcodec copy -acodec copy  "01.mp4"
+ffmpeg -ss 00:08:00 -t 00:08:00 -i "Mio_Imada.mp4" -vcodec copy -acodec copy  "02.mp4"
+ffmpeg -ss 00:16:00 -t 00:08:00 -i "Mio_Imada.mp4" -vcodec copy -acodec copy  "03.mp4"
+ffmpeg -ss 00:24:00 -t 00:08:00 -i "Mio_Imada.mp4" -vcodec copy -acodec copy  "04.mp4"
+ffmpeg -ss 00:32:00 -t 00:08:00 -i "Mio_Imada.mp4" -vcodec copy -acodec copy  "05.mp4"

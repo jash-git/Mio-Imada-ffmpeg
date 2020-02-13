@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<!-- saved from url=(0030)https://ad.setn.com/Ads/travel -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-size:0;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-align: flex-start;
+            -webkit-flex-align: flex-start;
+            -ms-flex-align: flex-start;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            width: 100%;
+            height:100vh;
+            max-height: 736px;
+            box-sizing: border-box;
+            /*padding-bottom: 2px;*/
+            background-color: black;
+            background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 1%);
+            background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,1) 1%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,1) 1%);
+        }
+    </style>
+    
+
+    <link href="./travel.css" rel="stylesheet">
+    <script async="" src="./analytics.js.下載"></script><script src="./jquery.min.js(2).下載"></script>
+
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-86419708-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+    <script src="./google-analyticsjs.js.下載"></script>
+    <script>
+        $(document).ready(function () {
+            $('.travel-op > a').bind('click', function () {
+                var dom = $(this)[0];
+                var id = parseInt(dom.dataset.adid, 10);
+                var type = parseInt(dom.dataset.adtype, 10);
+                if (id !== 0) {
+                    type = type == 1 ? type : 2
+                    $.post('/api/Travels/PostTravelAD/' + id + '/' + type + '/1', function (data) { });
+                }
+            });
+
+            $('.travel-ads > h5 > a').bind('click', function () {
+                var dom = $(this)[0];
+                var id = parseInt(dom.dataset.adid, 10);
+                $.post('/api/Travels/PostTravelAD/' + id + '/2/1', function (data) { });
+            });
+
+            try {
+                var ids = [];
+                $('.travel-op > a').each(function (index, arg) {
+                    var type = parseInt(arg.dataset.adtype, 10);
+                    if (type == 0) {
+                        ids.push(parseInt(arg.dataset.adid, 10));
+                    }
+                });
+                $('.travel-ads > h5 > a').each(function (index, arg) {
+                    ids.push(parseInt(arg.dataset.adid, 10));
+                });
+
+                $.post('/api/Travels/PostTravelADViewCount/' + ids.toString() + '/3/1', function () { });
+            }
+            catch (ex) {
+                console.log(ex.message);
+            }
+        });
+    </script>
+
+    <style>
+        .travel-container {
+            background-color:#f9b00c;
+        }
+        .travel-container > div > .travel-ads > h5 > a {
+            color:#000000;
+        }
+    </style>
+
+
+
+</head>
+<body>
+    <div class="container">
+        <div>
+            
+
+    <div class="travel-container">
+        
+        <section class="travel-head">
+            <img src="./travel_img.gif">
+        </section>
+
+
+
+                <div>
+                    <div class="travel-op">
+                                <a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13782" class="gt" data-pa="旅遊長版(PC)" data-pl="雙向0210" target="_blank" data-adid="42" data-adtype="1"><img src="./找到了.gif" alt="雙向0210"></a>
+
+                    </div>
+                    <div class="travel-ads">
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13783" class="gt" data-pa="旅遊長版(PC)" data-pl="早鳥預訂》日本立山黑部送小費" target="_blank" data-adid="132">‧ 早鳥預訂》日本立山黑部送小費</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13784" class="gt" data-pa="旅遊長版(PC)" data-pl="5月》北海道芝櫻 早鳥送小費" target="_blank" data-adid="64">‧ 5月》北海道芝櫻 早鳥送小費</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13785" class="gt" data-pa="旅遊長版(PC)" data-pl="5月》英國華航直飛早鳥送小費" target="_blank" data-adid="65">‧ 5月》英國華航直飛早鳥送小費</a></h5>
+                    </div>
+                </div>
+                <div>
+                    <div class="travel-op">
+                                <a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13802" class="gt" data-pa="旅遊長版(PC)" data-pl="喜鴻0210" target="_blank" data-adid="38" data-adtype="1"><img src="./喜鴻.gif" alt="喜鴻0210"></a>
+
+                    </div>
+                    <div class="travel-ads">
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13803" class="gt" data-pa="旅遊長版(PC)" data-pl="下龍灣畫中遊 河內五星食宿" target="_blank" data-adid="74">‧ 下龍灣畫中遊 河內五星食宿</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13804" class="gt" data-pa="旅遊長版(PC)" data-pl="韓春賞花 釜山慶州玩透透" target="_blank" data-adid="75">‧ 韓春賞花 釜山慶州玩透透</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13805" class="gt" data-pa="旅遊長版(PC)" data-pl="搭星宇遊檳城只要9900起" target="_blank" data-adid="76">‧ 搭星宇遊檳城只要9900起</a></h5>
+                    </div>
+                </div>
+                <div>
+                    <div class="travel-op">
+                                <a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13806" class="gt" data-pa="旅遊長版(PC)" data-pl="哈拿0210" target="_blank" data-adid="40" data-adtype="1"><img src="./哈拿1.gif" alt="哈拿0210"></a>
+
+                    </div>
+                    <div class="travel-ads">
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13807" class="gt" data-pa="旅遊長版(PC)" data-pl="世界最大櫻花慶典在韓國" target="_blank" data-adid="104">‧ 世界最大櫻花慶典在韓國</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13808" class="gt" data-pa="旅遊長版(PC)" data-pl="韓劇也來取景的櫻花勝地" target="_blank" data-adid="105">‧ 韓劇也來取景的櫻花勝地</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13809" class="gt" data-pa="旅遊長版(PC)" data-pl="異國風情巨濟島超浪漫異國風情" target="_blank" data-adid="106">‧ 異國風情巨濟島超浪漫異國風情</a></h5>
+                    </div>
+                </div>
+                <div>
+                    <div class="travel-op">
+                                <a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13814" class="gt" data-pa="旅遊長版(PC)" data-pl="星悅航空0210" target="_blank" data-adid="50" data-adtype="1"><img src="./星悅100x75.gif" alt="星悅航空0210"></a>
+
+                    </div>
+                    <div class="travel-ads">
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13815" class="gt" data-pa="旅遊長版(PC)" data-pl="星悅航空享30KG託運行李" target="_blank" data-adid="162">‧ 星悅航空享30KG託運行李</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13816" class="gt" data-pa="旅遊長版(PC)" data-pl="放空賞北九州.山口縣絕景" target="_blank" data-adid="163">‧ 放空賞北九州.山口縣絕景</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13817" class="gt" data-pa="旅遊長版(PC)" data-pl="懶人最愛的名古屋.北陸玩法" target="_blank" data-adid="164">‧ 懶人最愛的名古屋.北陸玩法</a></h5>
+                    </div>
+                </div>
+                <div>
+                    <div class="travel-op">
+                                <a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13818" class="gt" data-pa="旅遊長版(PC)" data-pl="天擎韓觀0210" target="_blank" data-adid="51" data-adtype="1"><img src="./天擎.gif" alt="天擎韓觀0210"></a>
+
+                    </div>
+                    <div class="travel-ads">
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13819" class="gt" data-pa="旅遊長版(PC)" data-pl="雪怪奇緣！藏王樹冰戲雪趣" target="_blank" data-adid="165">‧ 雪怪奇緣！藏王樹冰戲雪趣</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13820" class="gt" data-pa="旅遊長版(PC)" data-pl="前進茨城！日本夢幻賞花勝地" target="_blank" data-adid="166">‧ 前進茨城！日本夢幻賞花勝地</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13821" class="gt" data-pa="旅遊長版(PC)" data-pl="世界夢號基隆啟航鹿兒島五日" target="_blank" data-adid="167">‧ 世界夢號基隆啟航鹿兒島五日</a></h5>
+                    </div>
+                </div>
+                <div>
+                    <div class="travel-op">
+                                <a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13810" class="gt" data-pa="旅遊長版(PC)" data-pl="百威印尼0210" target="_blank" data-adid="52" data-adtype="1"><img src="./特例_百威.gif" alt="百威印尼0210"></a>
+
+                    </div>
+                    <div class="travel-ads">
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13811" class="gt" data-pa="旅遊長版(PC)" data-pl="萬隆搭列車遊抹茶色風光" target="_blank" data-adid="168">‧ 萬隆搭列車遊抹茶色風光</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13812" class="gt" data-pa="旅遊長版(PC)" data-pl="晨曦中追海豚遊夯打卡點" target="_blank" data-adid="169">‧ 晨曦中追海豚遊夯打卡點</a></h5>
+                                <h5><a href="http://event.7to.com.tw/2015/link.php?PID=660&amp;PSID=13813" class="gt" data-pa="旅遊長版(PC)" data-pl="印尼美照聖地畢諾斯森林" target="_blank" data-adid="170">‧ 印尼美照聖地畢諾斯森林</a></h5>
+                    </div>
+                </div>
+
+           
+
+        </div>
+        </div>
+    </div>
+
+
+</body></html>

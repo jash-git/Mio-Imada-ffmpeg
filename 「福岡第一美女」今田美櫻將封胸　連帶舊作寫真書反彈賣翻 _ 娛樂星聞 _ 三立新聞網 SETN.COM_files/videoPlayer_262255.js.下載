@@ -1,0 +1,918 @@
+﻿﻿/*PARAMETERS*/
+/* GENERATION: 16:45:30-11, February 2020-262255 */
+/* Template: videoPlayer.new */
+
+// Old Script Domain
+innity_protocol = (location.protocol == "https:") ? "https:" : "http:";
+innity_domain   = (typeof innity_domain == "undefined") ? "https://media.innity.net/201912_30446/117014/" : innity_domain;
+innity_domain   = (typeof __innity_domain_262255 != "undefined") ? __innity_domain_262255 : innity_domain;
+innity_prem     = (typeof innity_prem == "undefined") ? innity_protocol + "//avn.innity.com" : innity_prem;
+innity_adnw     = (typeof innity_adnw == "undefined") ? innity_protocol + "//avp.innity.com" : innity_adnw;
+innity_exclk    = (typeof innity_exclk == "undefined") ? Math.floor((new Date().getTime() + 86400000) / 1000) : innity_exclk;
+
+var version = "v0.0.4"; // Updated 01/03/2019
+var ad_262255 = {};
+ad_262255.base                   = innity_domain;
+ad_262255.adid                   = "262255";
+ad_262255.width                  = 100;
+ad_262255.height                 = 56.25;
+ad_262255.widthUnit              = "%";
+ad_262255.heightUnit             = "%";
+ad_262255.time_to_wait           = 5;
+ad_262255.cd_count               = ad_262255.time_to_wait;
+ad_262255.requireClose           = true;
+ad_262255.showSkipText           = true;
+ad_262255.requireVideoEndClose   = false;
+ad_262255.autoplay               = false;
+ad_262255.autoplay_mobile        = true;
+ad_262255.src                    = "{creative_src}";
+ad_262255.autoplay_src           = "{creative_autoplay_src}";
+ad_262255.backup                 = ad_262255.base + "assets_262255/video1.jpg";
+ad_262255.videoPlayer            = null;
+ad_262255.fallbackPlayer         = null;
+ad_262255.videoStarted           = false;
+ad_262255.visibilityHidden       = 'hidden';
+ad_262255.disableVisibilityPlay  = false;
+ad_262255.mobileBrowser          = (typeof (MobilePlatform) === 'function') ? new MobilePlatform() : false;
+ad_262255.isMobile               = false;
+ad_262255.autoplay_width         = 640;
+ad_262255.autoplay_height        = 360;
+ad_262255.advertisement_label    = false;
+ad_262255.transitionDelay        = 1;
+ad_262255.isCPM                  = true;
+ad_262255.language               = {adlabel:'廣告', youcanskip:'跳過廣告', skip:'關閉廣告', midcta:'了解更多', cta:'了解更多'};
+ad_262255.isVAST                 = false;
+ad_262255.isVPAID                = false;
+ad_262255.vpaid                  = {};
+ad_262255.useNativePlayer        = false;
+
+// VAST URL
+if (typeof innity_vast_url != "undefined") {
+	ad_262255.vast_url = innity_vast_url;
+	innity_vast_url = "";
+} else {
+	ad_262255.vast_url  = 'https://ad2.apx.appier.net/www/delivery/vxml.php?zoneid=2105';
+}
+ad_262255.vast_options = {
+	withCredentials : false,
+	wrapperLimit : 5
+};
+
+var showClose_262255 = false;
+var c262255_fsElement = false;
+
+var span_262255                  = document.createElement("span");
+span_262255.id                   = "span_262255";
+span_262255.style.width          = ad_262255.width + ad_262255.widthUnit;
+span_262255.style.height         = 0;
+span_262255.style.display        = "inline-block";
+span_262255.style.position       = "relative";
+span_262255.style.margin         = "0px";
+span_262255.style.paddingBottom  = ad_262255.height + "%";
+span_262255.style.overflow       = "hidden";
+span_262255.style.background     = "transparent";
+//span_262255.style.cursor       = "pointer";
+document.body.appendChild(span_262255);
+
+// Video Container
+var video_container_262255 = document.createElement("div");
+video_container_262255.id = "video_container_262255";
+video_container_262255.style.width = "100%";
+video_container_262255.style.height = "100%";
+video_container_262255.style.display = "block";
+video_container_262255.style.position = "absolute";
+video_container_262255.style.margin = "0px";
+video_container_262255.style.padding = "0px";
+video_container_262255.style.backgroundColor = "#000000";
+video_container_262255.style.left = "0px";
+video_container_262255.style.top = "0px";
+span_262255.appendChild(video_container_262255);
+
+/**
+ * @requires BROWSER
+ */
+function browser_262255() {
+	this.ua         = " " + navigator.userAgent.toLowerCase();
+	this.av         = parseInt(navigator.appVersion);
+	this.isWin      = (this.ua.indexOf("win") >= 0);
+	this.isWinVista = (this.ua.indexOf("windows nt 6.0") >= 0);
+	this.isMac      = (this.ua.indexOf("mac") >= 0);
+	this.isLinux    = (this.ua.indexOf("linux") >= 0);
+	this.isIE       = (this.ua.indexOf("msie") >= 0) || (Object.hasOwnProperty.call(window, "ActiveXObject") && !window.ActiveXObject);
+	this.isNav4     = ((this.ua.indexOf("mozilla") >= 0) && (this.ua.indexOf("compatible") == -1) && (this.av < 5));
+	this.isFirefox  = (this.ua.indexOf("firefox") >= 0);
+	this.isOpera    = (this.ua.indexOf("opera") > 0);
+	if (this.isOpera) {
+		this.isIE = false;
+	}
+	this.isSafari    = (this.ua.indexOf("applewebkit") > 0);
+	this.isChrome    = (this.ua.indexOf("chrome") > 0);
+	this.isKonqueror = (this.ua.indexOf("konqueror") > 0);
+	this.isGecko     = (this.ua.indexOf("gecko/") > 0);
+	this.isCamino    = (this.ua.indexOf("camino/") > 0);
+	this.IEVersion   = (this.ua.indexOf("msie") + 1 ? parseFloat(this.ua.split("msie")[1]) : 999);
+	this.isIE5up     = (!this.isIE) ? true : ((this.IEVersion > 5) ? true : false);
+	this.isIE6up     = (!this.isIE) ? true : ((this.IEVersion > 6) ? true : false);
+	this.isIE9up     = (!this.isIE) ? true : ((this.IEVersion > 9) ? true : false);
+	// iOS
+	this.isIOS = (/(iphone|ipod|ipad)/i.test(this.ua));
+	try {
+		this.IOSVersion = (this.ua).match(/OS (\d+)_(\d+)_?(\d+)?/i);
+		this.IOSVersion = (this.isIOS && this.IOSVersion) ? parseFloat(parseInt(this.IOSVersion[1], 10) + "." + parseInt(this.IOSVersion[2], 10) + "." + parseInt(this.IOSVersion[3] || 0, 10)) : 999;
+	} catch(e) {
+		this.IOSVersion = 1;
+	}
+	// Android
+	this.isAndroid = (/(android)/i.test(this.ua));
+	try {
+		this.AndroidVersion = (this.isAndroid) ? parseFloat(this.ua.slice(this.ua.indexOf("android") + 8)) : 999;
+	} catch(e) {
+		this.AndroidVersion = 999;
+	}
+	// Facebook Webview
+	this.isMobileWebView = (/(fb4a|fbios)/i.test(this.ua));
+	// Canvas Tag Support
+	try {
+		this.supportCanvas = ((!!document.createElement("canvas").getContext) ? true : false);
+	} catch(e) {
+		this.supportCanvas = false;
+	}
+	// Video Tag Support
+	try {
+		this.supportVideo = ((!!document.createElement("video").canPlayType) ? true : false);
+	} catch(e) {
+		this.supportVideo = false;
+	}
+	// HTML5 support
+	this.supportHTML5 = (this.supportCanvas && this.supportVideo && (!(this.isIE && this.IEVersion < 9))) ? true : false;
+}
+var mybrowser_262255 = new browser_262255();
+/** END */
+/**
+** Start construct video player close button
+**/
+if(ad_262255.requireClose) { 
+	// Countdown Skip Button Container
+	var video_countdown_skip_262255 = document.createElement("div");
+	video_countdown_skip_262255.id = "video_countdown_skip_262255";
+	video_countdown_skip_262255.style.cssText = "position:absolute;width:auto;height:auto;display:block;margin:10px;right:0px;top:-100px;background-color:rgba(0,0,0,0.5);border-radius:100px;cursor:pointer;-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-transition:top " + ad_262255.transitionDelay + "s cubic-bezier(.56,.41,.05,.92);transition:top " + ad_262255.transitionDelay + "s cubic-bezier(.56,.41,.05,.92);";
+	if (!ad_262255.showSkipText) {
+		video_countdown_skip_262255.style.backgroundColor = "rgba(0,0,0,0)";
+	}
+	span_262255.appendChild(video_countdown_skip_262255);
+	
+	// Countdown You Can Skip Text
+	var video_countdown_text_262255 = document.createElement("div");
+	video_countdown_text_262255.id = "video_countdown_text_262255";
+	video_countdown_text_262255.style.cssText = "position:relative;width:140px;height:30px;float:left;overflow:hidden;";
+	if (!ad_262255.showSkipText) {
+		video_countdown_text_262255.style.display    = "none";
+	}
+	video_countdown_skip_262255.appendChild(video_countdown_text_262255);
+	
+	var video_countdown_content_262255 = document.createElement("span");
+	video_countdown_content_262255.style.cssText = "position:absolute;width:inherit;color:white;font: normal 12px/30px Helvetica,Arial,sans-serif;text-align:center;margin:2px 10px 2px 5px;left:0;";
+	video_countdown_content_262255.innerHTML = ad_262255.language.youcanskip;
+	video_countdown_text_262255.appendChild(video_countdown_content_262255);
+	
+	// Countdown Close
+	var video_countdown_close_button_262255 = document.createElement("div");
+	video_countdown_close_button_262255.id = "video_countdown_close_button_262255";
+	video_countdown_close_button_262255.style.cssText = "position:relative;float:left;width:30px;height:30px;display:block;padding:0px;margin:2px 2px 2px 0px;background: center no-repeat rgba(102,102,102,1);border-radius:50%;background-size:10px 10px;color:white;font:bold 14px/30px Helvetica,Arial,sans-serif;text-align:center;";
+	video_countdown_close_button_262255.innerHTML = ad_262255.cd_count;
+	video_countdown_skip_262255.appendChild(video_countdown_close_button_262255);
+	// Countdown Close SVG
+	var video_countdown_close_icon_262255 ="background-image:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%3E%20%3Cpath%20style%3D%22fill%3A%23fff%22%20d%3D%22M10.825%2C8l4.591-4.591A2%2C2%2C0%2C0%2C0%2C12.591.584L8%2C5.175%2C3.409%2C0.584A2%2C2%2C0%2C0%2C0%2C.584%2C3.409L5.175%2C8%2C0.584%2C12.591a2%2C2%2C0%2C0%2C0%2C2.825%2C2.825L8%2C10.825l4.591%2C4.591a2%2C2%2C0%2C0%2C0%2C2.825-2.825Z%22%2F%3E%3C%2Fsvg%3E')"; 
+	
+	// Countdown Close Ring
+	var video_countdown_ring_262255 = document.createElement("div");
+	video_countdown_ring_262255.id = "video_countdown_ring_262255";
+	video_countdown_ring_262255.style.cssText = "position:absolute;width:34px;height:34px;right:0px;top:0px;margin:0px;padding:0px;";
+	video_countdown_skip_262255.appendChild(video_countdown_ring_262255);
+	// Countdown Close SVG
+	var video_countdown_ring_svg_262255 = document.createElementNS("http://www.w3.org/2000/svg","svg");
+	video_countdown_ring_svg_262255.setAttributeNS (null, "viewBox", "0 0 34 34");
+	video_countdown_ring_svg_262255.setAttributeNS (null, "width", "34");
+	video_countdown_ring_svg_262255.setAttributeNS (null, "height", "34");
+	video_countdown_ring_svg_262255.style.cssText = "position:relative;width:34px;height:34px;";
+	video_countdown_ring_262255.appendChild(video_countdown_ring_svg_262255);
+	var video_countdown_ring_circle_262255 = document.createElementNS("http://www.w3.org/2000/svg","circle");
+	video_countdown_ring_circle_262255.setAttributeNS (null, "r", "15.78");
+	video_countdown_ring_circle_262255.setAttributeNS (null, "cx", "17");
+	video_countdown_ring_circle_262255.setAttributeNS (null, "cy", "17");
+	video_countdown_ring_circle_262255.setAttributeNS (null, "fill", "transparent");
+	video_countdown_ring_circle_262255.setAttributeNS (null, "stroke-dasharray", "94.247");
+	video_countdown_ring_circle_262255.setAttributeNS (null, "stroke-dashoffset", "0");
+	video_countdown_ring_circle_262255.setAttributeNS (null, "transform", "rotate(-90 17 17)");
+	video_countdown_ring_circle_262255.style.cssText = "width:100%;height:100%;stroke:#fff;stroke-width:3px;stroke-linecap:round;";
+	video_countdown_ring_svg_262255.appendChild(video_countdown_ring_circle_262255);
+}
+function drawLoading(id, prop, maxcd, cur, speed) {
+	var r    = parseInt(id.getAttribute('r')),
+			c    = Math.PI*(r*2),
+			val  = Math.ceil(cur*100);
+	(function(){
+		var fc = maxcd*100;
+		var pct = c * (1 - (val/fc));
+		id.style[prop] = pct;
+	})();
+};
+/**
+** End construct video player close button
+**/
+
+window.addEventListener("load", function(){
+	/**
+	** Close button behaviour
+	**/
+	if(ad_262255.requireClose) {
+		if(!showClose_262255) {
+			if(ad_262255.mobileBrowser !== false){
+				ad_262255.isMobile = (ad_262255.mobileBrowser.getOS() !== 'ios' && ad_262255.mobileBrowser.getOS() !== 'android') ? false : true;
+				if(ad_262255.isMobile ||  ad_262255.time_to_wait < 1) {
+					c262255_timeUpdateComplete();
+					video_countdown_skip_262255.style.backgroundColor = "rgba(0,0,0,0)";
+				}
+				else {
+					video_countdown_text_262255.style.cssText += "-webkit-transition:width " + ad_262255.transitionDelay + "s ease 0.5s;transition:width " + ad_262255.transitionDelay + "s ease 0.5s;";
+				}
+			}
+			video_countdown_skip_262255.style.top = "0px";
+		}
+	}
+		
+	DMVAST.parser.parse(ad_262255.vast_url, ad_262255.vast_options, function(vastObj, error) {console.log(vastObj)
+		if (vastObj !== null && typeof vastObj != 'undefined'){
+			var mediaFiles = vastObj.ads[0].creatives[0].mediaFiles;
+			for (var i = 0; i < mediaFiles.length; i++) {
+				ad_262255.isVPAID    = false;
+				ad_262255.isVAST     = false;
+				if(mediaFiles[i].mimeType == 'video/mp4' || mediaFiles[i].mimeType == 'video/webm'){
+					ad_262255.src = mediaFiles[i].fileURL;
+					ad_262255.isVAST = true;
+					break;
+				}
+				if(mediaFiles[i].mimeType == 'video/mpg'){
+					ad_262255.autoplay_src = mediaFiles[i].fileURL;
+					ad_262255.isVAST = true;
+					break;
+				}
+				if(mediaFiles[i].mimeType == 'application/javascript'){
+					ad_262255.src = mediaFiles[i].fileURL;
+					ad_262255.isVPAID    = true;
+					// Not breaking loop, trying to look for video file instead
+				}
+			}
+			if (ad_262255.src.indexOf('media.innity.net') >= 0) {
+				// media from innity
+				filename    = ad_262255.src.substring(ad_262255.src.lastIndexOf('/') + 1);
+				ad_262255.adid  = filename.split(".")[0];
+				ad_262255.adid  = ad_262255.adid.split("_")[0];
+				ad_262255.adid  = ad_262255.adid.replace("C", "");
+				parent.postMessage("c262255_changeAdId|" + ad_262255.adid, '*');
+				
+				InnityHTMLAd.id = "c" + ad_262255.adid;
+				InnityHTMLAd.adid = ad_262255.adid;
+				InnityHTMLAd.trackingId = "c" + ad_262255.adid;
+				InnityHTMLAd.adTrackingId = ad_262255.adid;
+			}
+			InnityHTMLAd.expanded();
+			ad_262255.videoPlayerId = "video1";
+			if(ad_262255.isVAST){
+				/**
+				 ** Construct video player
+				 **/
+				ad_262255.videoPlayer  = new InnityAppsMobileAutoPlayVideo(
+					video_container_262255.id,
+					ad_262255.videoPlayerId,
+					{
+						mp4: ad_262255.src,
+						//mpg: ad_262255.autoplay_src,
+						poster: ad_262255.backup,
+						autoplay: ad_262255.autoplay,
+						loop: false,
+						forceFallback: false,
+						onEnded: c262255_whenHTMLVideoPlayedEnded,
+						onClickPlay: c262255_whenAutoplayIsClicked,
+						onExitFullscreen: function(){c262255_fsElement = false},
+						// For fallback player.
+						fullscreen: true,
+						canvaswidth: ad_262255.autoplay_width,
+						canvasheight: ad_262255.autoplay_height,
+						midctatext: ad_262255.language.midcta,
+						playstatectatext: ad_262255.language.cta,
+						advertisementlabel: ad_262255.advertisement_label,
+						adtext: ad_262255.language.adlabel,
+						urls: 'clickTAG',
+						cpm: ad_262255.isCPM
+					},
+					ad_262255.backup
+				);
+				
+				ad_262255.fallbackPlayer = ad_262255.videoPlayer.getFallbackPlayer();
+				if (ad_262255.fallbackPlayer !== null) {
+						c262255_runFallbackVideo();
+				}
+
+				c262255_visibilityBinding();
+				
+				if(ad_262255.requireClose) {
+					ad_262255.progress_interval = setInterval(c262255_timeUpdate,50);
+				}
+				// Set clickTAG
+				if (typeof vastObj.ads[0].creatives[0].videoClickThroughURLTemplate != "undefined" && vastObj.ads[0].creatives[0].videoClickThroughURLTemplate != null) {
+					InnityHTMLAd.urls["clickTAG"] = innity_adnw + "/click/?campaignid=" + InnityHTMLAd.campaignId + "&adid=" + ad_262255.adid + "&zoneid=" + InnityHTMLAd.zoneid + "&pubid=" + pub_262255 + "&cb=" + cb_262255 + "&ex=" + innity_exclk + "&pcu=" + pcu_262255 + "&auth=" + auth_262255 + "&url=" + encodeURIComponent(vastObj.ads[0].creatives[0].videoClickThroughURLTemplate);
+				}
+				// Set tracking
+				if (typeof vastObj.ads[0].creatives[0].trackingEvents != 'undefined') {
+					vastVideo  = {};
+					vastVideo.started = false;
+					vastVideo.playing = false;
+					vastVideo.finished= false;
+					vastVideo.played_00 = false;
+					vastVideo.played_25 = false;
+					vastVideo.played_50 = false;
+					vastVideo.played_75 = false;
+					vastVideo.mute = InnityHTMLAd.InnityVideo.video.defaultMuted;
+					vastVideo.trackingEvents	= vastObj.ads[0].creatives[0].trackingEvents;
+					InnityHTMLAd.InnityVideo.video.addEventListener("play", videoHandler, false);
+					InnityHTMLAd.InnityVideo.video.addEventListener("pause", videoHandler, false);
+					InnityHTMLAd.InnityVideo.video.addEventListener("ended", videoHandler, false);
+					InnityHTMLAd.InnityVideo.video.addEventListener("timeupdate", onTimeupdate, false);
+					InnityHTMLAd.InnityVideo.video.addEventListener("volumechange", onVolumechange, false);
+					
+					function videoHandler(e) {
+						// Pause
+						if (typeof vastVideo.trackingEvents.pause != 'undefined') {
+							if(vastVideo.started && e.type == "pause" && InnityHTMLAd.InnityVideo.video.currentTime < InnityHTMLAd.InnityVideo.video.duration) {
+								vastVideo.playing = false;
+								(new Image()).src = vastVideo.trackingEvents.pause;
+							}
+						}
+						// Play
+						if(vastVideo.started && e.type == "play") {
+							vastVideo.playing = true;
+						}
+						// Replay
+						if(e.type == "play") {
+							if(vastVideo.finished) {
+								vastVideo.finished = false;
+							}
+						}
+						// Ended
+						if (typeof vastVideo.trackingEvents.complete != 'undefined') {
+							if(e.type == "ended") {
+								(new Image()).src = vastVideo.trackingEvents.complete;
+								vastVideo.started = false;
+								vastVideo.playing = false;
+								vastVideo.finished= true;
+								vastVideo.played_25 = false;
+								vastVideo.played_50 = false;
+								vastVideo.played_75 = false;
+							}
+						}
+						
+					}
+					function onTimeupdate() {
+						// 00
+						if(vastVideo.currentTime >= 0 && !vastVideo.played_00) {
+							vastVideo.played_00 = true;
+						}
+						// Start
+						if (typeof vastVideo.trackingEvents.start != 'undefined') {
+							if(InnityHTMLAd.InnityVideo.video.currentTime > 0 && !vastVideo.started) {
+								(new Image()).src = vastVideo.trackingEvents.start;
+								vastVideo.started = true;
+								vastVideo.playing = true;
+							}
+						}
+						// 25%
+						if (typeof vastVideo.trackingEvents.firstQuartile != 'undefined') {
+							if(InnityHTMLAd.InnityVideo.video.currentTime > (InnityHTMLAd.InnityVideo.video.duration * 0.25) && !vastVideo.played_25) {
+								vastVideo.played_25 = true;
+								(new Image()).src = vastVideo.trackingEvents.firstQuartile;
+							}
+						}
+						// 50%
+						if (typeof vastVideo.trackingEvents.midpoint != 'undefined') {
+							if(InnityHTMLAd.InnityVideo.video.currentTime > (InnityHTMLAd.InnityVideo.video.duration * 0.5) && !vastVideo.played_50) {
+								vastVideo.played_50 = true;
+								(new Image()).src = vastVideo.trackingEvents.midpoint;
+							}
+						}
+						// 75%
+						if (typeof vastVideo.trackingEvents.thirdQuartile != 'undefined') {
+							if(InnityHTMLAd.InnityVideo.video.currentTime > (InnityHTMLAd.InnityVideo.video.duration * 0.75) && !vastVideo.played_75) {
+								vastVideo.played_75 = true;
+								(new Image()).src = vastVideo.trackingEvents.thirdQuartile;
+							}
+						}
+					}
+					function onVolumechange() {
+						// mute
+						if (typeof vastVideo.trackingEvents.mute != 'undefined') {
+							if(InnityHTMLAd.InnityVideo.video.muted && InnityHTMLAd.InnityVideo.video.currentTime > 0) {
+								(new Image()).src = vastVideo.trackingEvents.mute;
+							}
+						}
+						// Unmute
+						if (typeof vastVideo.trackingEvents.unmute != 'undefined') {
+							if(vastVideo.mute && !InnityHTMLAd.InnityVideo.video.muted && InnityHTMLAd.InnityVideo.video.volume > 0) {
+								(new Image()).src = vastVideo.trackingEvents.unmute;
+							}
+						}
+					}
+				}
+				
+				if (!mybrowser_262255.isIOS) {
+					document.getElementById(ad_262255.videoPlayerId).addEventListener("loadeddata", function () {
+						InnityHTMLAd.dispatch(vastObj.ads[0].impressionURLTemplates);
+						c262255_showAd();
+					});
+				} else {
+					document.getElementById(ad_262255.videoPlayerId).onloadeddata = function () {
+						InnityHTMLAd.dispatch(vastObj.ads[0].impressionURLTemplates);
+						c262255_showAd();
+					}
+				}
+				
+				if(ad_262255.requireClose) {
+					//ad_262255.progress_interval = setInterval(c262255_timeUpdate,50);
+				}
+			}
+			if(ad_262255.isVPAID){
+				vendorIsAppier  = (ad_262255.vast_url.indexOf("appier") >= 0)?true:false;
+				vendorIsIAS     = (ad_262255.vast_url.indexOf("vast.adsafeprotected.com") >= 0)?true:false;
+				isMoatWrapper   = (ad_262255.src.indexOf("moatwrapper.js") >= 0)?true:false;
+				if(ad_262255.requireClose){
+					ad_262255.time_to_wait   = 0;
+					ad_262255.cd_count       = ad_262255.time_to_wait;
+					var showClose_262255     = true;
+					
+					// Show Close button
+					video_countdown_close_button_262255.innerHTML = "";
+					video_countdown_content_262255.innerHTML = ad_262255.language.skip;
+					video_countdown_text_262255.style.width = "0px";
+					video_countdown_ring_262255.style.display = "none";
+					video_countdown_close_button_262255.style.cssText += video_countdown_close_icon_262255;
+					video_countdown_close_button_262255.addEventListener("mouseover", function(){
+						video_countdown_close_button_262255.style.backgroundColor = "rgb(153,153,153)";
+					}, false);
+					video_countdown_close_button_262255.addEventListener("mouseout", function(){
+						video_countdown_close_button_262255.style.backgroundColor = "rgb(102,102,102)";
+					}, false);
+					video_countdown_close_button_262255.addEventListener("click", function(){
+						ad_262255.vpaid.player.pause();
+						InnityHTMLAd.shrink();
+					});
+					video_countdown_skip_262255.style.background = "";
+				}
+				// Loading the vpaid script
+				vpaidIframe_262255     = document.createElement('iframe');
+				vpaidIframe_262255.id  = "adloaderframe";
+				span_262255.appendChild(vpaidIframe_262255);
+				
+				wrappedURL  = "";
+				queryStr    = "";
+				if (isMoatWrapper || vendorIsIAS) {
+					if (isMoatWrapper) {
+						queryStr    = ad_262255.src.substr(ad_262255.src.indexOf("#") + 1);
+					} else if (vendorIsIAS) {
+						param   = JSON.parse(vastObj.ads[0].creatives[0].adParameters);
+						if (typeof param.mediaFiles[0].uri != "undefined" && param.mediaFiles[0].uri != "") {
+							queryStr    = param.mediaFiles[0].uri.substr(param.mediaFiles[0].uri.indexOf("#") + 1);
+						}
+					}
+					if (queryStr != "") {
+						queryStr  = queryStr.split('&');
+						for (i = 0; i < queryStr.length; i++) {
+							v = queryStr[i].split('=');
+							if (v[0] == "vast") {
+								wrappedURL  = decodeURIComponent(v[1]);
+								break;
+							}
+						}
+					}
+				}
+				
+				if (mybrowser_262255.isIE && !mybrowser_262255.isIE9up) {
+					vpaidIframe_262255.contentWindow.contents = '<html><body><script id="innity_vpaid_262255" src="' + ad_262255.src + '"></scr' + 'ipt></body></html>';
+					vpaidIframe_262255.src = 'javascript:window["contents"]';
+				} else {
+					vpaidIframe_262255.contentWindow.document.open('text/html', 'replace');
+					vpaidIframe_262255.contentWindow.document.write('<html><body><script id="innity_vpaid_262255" src="' + ad_262255.src + '"></scr' + 'ipt></body></html>');
+					vpaidIframe_262255.contentWindow.document.close();
+				}
+				
+				vpaidIframe_262255.addEventListener("load", function(){
+					getVPAIDAd  = vpaidIframe_262255.contentWindow['getVPAIDAd'];
+					
+					if (getVPAIDAd && typeof getVPAIDAd == 'function') {
+						if(ad_262255.src.includes('appier')){
+							vendorIsAppier  = true;
+							ad_262255.closeOnVideoEnd = true;
+						}
+						ad_262255.vpaidCreative = getVPAIDAd();
+						ad_262255.vpaidCreative.handshakeVersion();
+						
+						span_262255.style.height = 0;
+						
+						/**
+						 ** Construct video player
+						 **/
+						if (!ad_262255.useNativePlayer) {
+							ad_262255.videoPlayer  = new InnityAppsMobileAutoPlayVideo(
+								video_container_262255.id,
+								ad_262255.videoPlayerId,
+								{
+									mp4: '',
+									//mpg: ad_262255.autoplay_src,
+									poster: ad_262255.backup,
+									autoplay: ad_262255.autoplay,
+									loop: false,
+									forceFallback: false,
+									onEnded: c262255_whenHTMLVideoPlayedEnded,
+									onClickPlay: c262255_whenAutoplayIsClicked,
+									onExitFullscreen: function(){c262255_fsElement = false},
+									// For fallback player.
+									fullscreen: true,
+									canvaswidth: ad_262255.autoplay_width,
+									canvasheight: ad_262255.autoplay_height,
+									midctatext: ad_262255.language.midcta,
+									playstatectatext: ad_262255.language.cta,
+									advertisementlabel: ad_262255.advertisement_label,
+									adtext: ad_262255.language.adlabel,
+									urls: 'clickTAG',
+									cpm: ad_262255.isCPM
+								},
+								ad_262255.backup
+							);
+							
+							ad_262255.fallbackPlayer = ad_262255.videoPlayer.getFallbackPlayer();
+							if (ad_262255.fallbackPlayer !== null) {
+								runFallbackVideo();
+							}
+						} else {
+							ad_262255.videoPlayer    = document.createElement("video");
+							ad_262255.videoPlayer.id = ad_262255.videoPlayerId;
+							ad_262255.videoPlayer.style.width    = video_container_262255.clientHeight + "px";
+							ad_262255.videoPlayer.style.height    = video_container_262255.clientHeight + "px";
+							video_container_262255.appendChild(ad_262255.videoPlayer);
+						}
+						
+						ad_262255.vpaid.player  = document.getElementById(ad_262255.videoPlayerId);
+						ad_262255.vpaid.player.style.height = "100%";
+						
+						// Set clickTAG
+						if (typeof vastObj.ads[0].creatives[0].videoClickThroughURLTemplate != "undefined" && vastObj.ads[0].creatives[0].videoClickThroughURLTemplate != null) {
+							InnityHTMLAd.urls["clickTAG"] = innity_adnw + "/click/?campaignid=" + InnityHTMLAd.campaignId + "&adid=" + ad_262255.adid + "&zoneid=" + InnityHTMLAd.zoneid + "&pubid=" + pub_262255 + "&cb=" + cb_262255 + "&ex=" + innity_exclk + "&pcu=" + pcu_262255 + "&auth=" + auth_262255 + "&url=" + encodeURIComponent(vastObj.ads[0].creatives[0].videoClickThroughURLTemplate);
+						} else {
+							if (wrappedURL != "" ) {
+								DMVAST.parser.parse(wrappedURL, ad_262255.vast_options, function(vastObj, error) {
+									// Set clickTAG
+									if (typeof vastObj.ads[0].creatives[0].videoClickThroughURLTemplate != "undefined" && vastObj.ads[0].creatives[0].videoClickThroughURLTemplate != null) {
+										InnityHTMLAd.urls["clickTAG"] = innity_adnw + "/click/?campaignid=" + InnityHTMLAd.campaignId + "&adid=" + ad_262255.adid + "&zoneid=" + InnityHTMLAd.zoneid + "&pubid=" + pub_262255 + "&cb=" + cb_262255 + "&ex=" + innity_exclk + "&pcu=" + pcu_262255 + "&auth=" + auth_262255 + "&url=" + encodeURIComponent(vastObj.ads[0].creatives[0].videoClickThroughURLTemplate);
+									}
+								});
+							}
+						}
+						// Set environment var
+						ad_262255.vpaid.environmentVars = {};
+						ad_262255.vpaid.environmentVars.slot = document.getElementById(video_container_262255.id);
+						ad_262255.vpaid.environmentVars.videoSlot = document.getElementById(ad_262255.videoPlayerId);
+						ad_262255.vpaid.environmentVars.videoSlotCanAutoPlay = true;
+						
+						// Event tracker
+						ad_262255.vpaid.tracker = new DMVAST.tracker(vastObj.ads[0], vastObj.ads[0].creatives[0])
+						
+						ad_262255.vpaid.creativeDataString = {
+							AdParameters: c262255_getCreativeAdParameters(vastObj)
+						};
+						
+						// Init Ad
+						ad_262255.vpaidCreative.initAd(
+							'100%',
+							'100%',
+							'normal',
+							128,
+							ad_262255.vpaid.creativeDataString,
+							ad_262255.vpaid.environmentVars
+						);
+						
+						if(ad_262255.closeOnVideoEnd){
+							ad_262255.vpaidCreative.subscribe(function() {
+								InnityHTMLAd.shrink();
+								InnityHTMLAd.track('_Video1_Close');
+							}, 'AdStopped');
+						}
+						var vpaidSupported;
+						if(
+							ad_262255.vpaidCreative.handshakeVersion && typeof ad_262255.vpaidCreative.handshakeVersion == "function"
+							&& ad_262255.vpaidCreative.initAd && typeof ad_262255.vpaidCreative.initAd == "function"
+							&& ad_262255.vpaidCreative.startAd && typeof ad_262255.vpaidCreative.startAd == "function"
+							&& ad_262255.vpaidCreative.stopAd && typeof ad_262255.vpaidCreative.stopAd == "function"
+							&& ad_262255.vpaidCreative.skipAd && typeof ad_262255.vpaidCreative.skipAd == "function"
+							&& ad_262255.vpaidCreative.resizeAd && typeof ad_262255.vpaidCreative.resizeAd == "function"
+							&& ad_262255.vpaidCreative.pauseAd && typeof ad_262255.vpaidCreative.pauseAd == "function"
+							&& ad_262255.vpaidCreative.resumeAd && typeof ad_262255.vpaidCreative.resumeAd == "function"
+							&& ad_262255.vpaidCreative.expandAd && typeof ad_262255.vpaidCreative.expandAd == "function"
+							&& ad_262255.vpaidCreative.collapseAd && typeof ad_262255.vpaidCreative.collapseAd == "function"
+							&& ad_262255.vpaidCreative.subscribe && typeof ad_262255.vpaidCreative.subscribe == "function"
+							&& ad_262255.vpaidCreative.unsubscribe && typeof ad_262255.vpaidCreative.unsubscribe == "function"
+						){
+							vpaidSupported = true;
+						}else{
+							vpaidSupported = false;
+						};
+						if(!vpaidSupported){
+							console.warn('VPAID 2.0 no supported');
+							return;
+						}
+						if (vendorIsAppier) {
+							// Play Video if video loaded
+							if (!mybrowser_262255.isIOS) {
+								document.getElementById(ad_262255.videoPlayerId).addEventListener("loadeddata", function () {
+									InnityHTMLAd.dispatch(vastObj.ads[0].impressionURLTemplates);
+									c262255_showAd();
+									c262255_visibilityBinding();
+								});
+							} else {
+								document.getElementById(ad_262255.videoPlayerId).onloadeddata = function () {
+									InnityHTMLAd.dispatch(vastObj.ads[0].impressionURLTemplates);
+									c262255_showAd();
+									c262255_visibilityBinding();
+								}
+							}
+						}
+						// Start ad on loaded
+						ad_262255.vpaidCreative.subscribe(function() {
+							ad_262255.vpaidCreative.startAd();
+						}, 'AdLoaded');
+						
+						// Subscribing to VPAID events
+						ad_262255.vpaidCreative.subscribe(function() {
+							c262255_showAd();
+						}, 'AdStarted');
+						ad_262255.vpaidCreative.subscribe(function() {
+							//InnityHTMLAd.attachVideo(ad_262255.vpaid.player);
+							c262255_showAd();
+							c262255_visibilityBinding();console.log('AdLoaded')
+						}, 'AdImpression');
+						
+						ad_262255.vpaidCreative.subscribe(function() {
+							InnityHTMLAd.dispatch(InnityHTMLAd.cBeacon);console.log('AdLoaded')
+						}, 'AdClickThru');
+						
+						ad_262255.vpaidCreative.subscribe(function() {
+							ad_262255.vpaid.tracker.track('start', true);
+							ad_262255.src = ad_262255.vpaid.player.src;
+						}, 'AdVideoStart');
+						
+						ad_262255.vpaidCreative.subscribe(function() {
+							ad_262255.vpaid.tracker.track('firstQuartile', true);
+						}, 'AdVideoFirstQuartile');
+						
+						ad_262255.vpaidCreative.subscribe(function() {
+							ad_262255.vpaid.tracker.track('midpoint', true);
+						}, 'AdVideoMidpoint');
+						
+						ad_262255.vpaidCreative.subscribe(function() {
+							ad_262255.vpaid.tracker.track('thirdQuartile', true);
+						}, 'AdVideoThirdQuartile');
+						
+						ad_262255.vpaidCreative.subscribe(function() {
+							ad_262255.vpaid.tracker.track('complete', true);
+							ad_262255.src = ad_262255.vpaid.player.src;
+						}, 'AdVideoComplete');
+						
+						// Try to start ad before ad loaded
+						try {
+							ad_262255.vpaidCreative.startAd();
+						} catch (e){}
+						try {
+							setTimeout(function(){
+								ad_262255.vpaidCreative.startAd();
+							}, 1000);
+						} catch (e){}
+
+						video_container_262255.style.width ="100%";
+						video_container_262255.style.height ="100%";
+						
+						var observer_262255 = new MutationObserver(function(mutations) {
+							mutations.forEach(function(mutation) {
+								if (mutation.type == "attributes") {
+									if (mutation.attributeName == "src") {
+										if (ad_262255.vpaid.player.src == "" || ad_262255.vpaid.player.src == window.location.href) {
+											ad_262255.vpaid.player.src  = ad_262255.src;
+										}
+									}
+								}
+							});
+						});
+						observer_262255.observe(ad_262255.vpaid.player, {
+							attributes: true
+						});
+					}
+				});
+			}
+		}
+	});
+}, false);
+
+function c262255_getCreativeAdParameters(vastObj) {
+	var adParameters_262255 = '{}';
+	try {
+		adParameters_262255 = vastObj.ads[0].creatives[0].adParameters;
+	}
+	catch(e) {
+		console.error('Error on getting creative\'s ad parameters');
+	}
+	return adParameters_262255;
+};
+function c262255_showAd() {
+	parent.postMessage("c262255_showAd", '*');
+	if(ad_262255.requireClose) {
+		//ad_262255.progress_interval = setInterval(c262255_timeUpdate,50);
+	}
+}
+function c262255_runFallbackVideo() {
+		ad_262255.fallbackPlayer.noLoop(); // Preview will not loop after ended.
+		ad_262255.fallbackPlayer.setClickCallback(c262255_whenAutoplayIsClicked);
+		ad_262255.fallbackPlayer.setVideoEndedCallback(c262255_whenHTMLVideoPlayedEnded);
+		ad_262255.fallbackPlayer.startEngine(); // This is always required!!!!!
+		ad_262255.autoplay_mobile = true;
+};
+
+function c262255_whenAutoplayIsClicked() {
+		// MPG Video Clicked Callback.
+		ad_262255.videoStarted = true;
+};
+
+function c262255_whenHTMLVideoPlayedEnded() {
+		// MP4/ WEBM Video Ended Callback.
+		ad_262255.videoStarted = false;
+		if(ad_262255.requireVideoEndClose) {
+			setTimeout(c262255_closeBannerHandler, 500);
+		}
+};
+	
+function c262255_playVideo() {
+		if (ad_262255.videoPlayer === null) {
+				return;
+		}
+		if (ad_262255.fallbackPlayer !== null) {
+				ad_262255.fallbackPlayer.playPreview();
+				return;
+		}
+		ad_262255.videoPlayer.playVideo();
+};
+function c262255_pauseVideo() {
+		if (ad_262255.videoPlayer === null) {
+				return;
+		}
+		if (ad_262255.fallbackPlayer !== null) {
+				ad_262255.fallbackPlayer.pausePreview();
+				return;
+		}
+		ad_262255.videoPlayer.pauseVideo();
+};
+function c262255_visibilityBinding() {
+		var visibilityChangeEvent = 'visibilitychange';
+		if (typeof(document.msHidden) !== 'undefined') {
+				ad_262255.visibilityHidden = 'msHidden';
+				visibilityChangeEvent = 'msvisibilitychange';
+		}
+		else if (typeof(document.webkitHidden) !== 'undefined') {
+				ad_262255.visibilityHidden = 'webkitHidden';
+				visibilityChangeEvent = 'webkitvisibilitychange';
+		}
+		document.addEventListener(visibilityChangeEvent, c262255_visibilityChange, false);
+};
+function c262255_visibilityChange() {
+		if (ad_262255.fallbackPlayer !== null) {
+				return;
+		}
+		if (document[ad_262255.visibilityHidden] === true) {
+				// When browser is hidden or in background.
+				ad_262255.videoPlayer.pauseVideo();
+		}
+		else {
+				// When browser is active or focus.
+				if(ad_262255.disableVisibilityPlay === false) {
+					ad_262255.videoPlayer.playVideo();
+				}
+		}
+};
+// ========== Video template required code ==========
+
+function c262255_closeBannerHandler(e){
+	InnityHTMLAd.shrink();
+	InnityHTMLAd.track('_Video1_Close');
+	c262255_pauseVideo();
+};
+
+function c262255_timeUpdateComplete(){
+	showClose_262255 = true;
+	clearInterval(ad_262255.progress_interval);
+	video_countdown_close_button_262255.innerHTML = "";
+	video_countdown_content_262255.innerHTML = ad_262255.language.skip;
+	video_countdown_text_262255.style.width = "0px";
+	video_countdown_ring_262255.style.display = "none";
+	video_countdown_close_button_262255.style.cssText += video_countdown_close_icon_262255;
+	
+	var mouseEvt = function(e){
+		switch(e.type){
+			case "mouseover":
+				video_countdown_close_button_262255.style.backgroundColor = "rgb(153,153,153)";
+				break;
+			case "mouseout":
+				video_countdown_close_button_262255.style.backgroundColor = "rgb(102,102,102)";
+				break;
+		}
+		e.stopPropagation();
+	};
+	
+	video_countdown_close_button_262255.addEventListener("mouseover", mouseEvt, false);
+	video_countdown_close_button_262255.addEventListener("mouseout", mouseEvt, false);
+	video_countdown_close_button_262255.addEventListener("click", c262255_closeBannerHandler);
+};
+
+function c262255_timeUpdate() {
+	var timeupdate_262255 = document.getElementById("video1").currentTime;
+	if (!showClose_262255 && timeupdate_262255 < 12) {
+		video_countdown_close_button_262255.innerHTML = (ad_262255.cd_count - Math.ceil(timeupdate_262255) + 1);
+		drawLoading(video_countdown_ring_circle_262255, "stroke-dashoffset", ad_262255.cd_count, timeupdate_262255, 3);
+	}
+	if(!showClose_262255 && timeupdate_262255 > ad_262255.cd_count) {
+		c262255_timeUpdateComplete();
+		setTimeout(function(){
+			video_countdown_skip_262255.style.backgroundColor = "rgba(0,0,0,0)";
+		}, ad_262255.transitionDelay*1000);
+	}
+};
+
+// ========== Video Control To Proxy ==========
+window.addEventListener("message", c262255_videoMessageHandler, false);
+function c262255_videoMessageHandler(event) {
+	if(event.data == "video_262255_play") {
+		c262255_fsElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement || false;
+		var olderIOS = ad_262255.mobileBrowser.getOS() === 'ios' ? ad_262255.mobileBrowser.getOSVersion()[0] < 10 ? true : false : false;
+		if(ad_262255.videoPlayer == null && olderIOS) { return; }
+		c262255_playVideo();
+	}
+  if(event.data == "video_262255_pause") {
+		if(ad_262255.videoPlayer == null) return;
+		c262255_fsElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement || false;
+		if (c262255_fsElement) {
+			return;
+		}
+		c262255_pauseVideo();
+	}
+}
+
+// ========== Element Generator ==========
+
+function generateMaterial(elementData, container) {
+	var elementType = (typeof(elementData.elType) === 'undefined') ? 'div' : elementData.elType;
+	var materialEl = document.createElement(elementType);
+	if(typeof(elementData.id) !== 'undefined') {
+		materialEl.setAttribute('id', elementData.id);
+	}
+	if(typeof(elementData.cssClass) === 'object' && typeof(elementData.cssClass.length) === 'number') {
+		for(var i = 0; i < elementData.cssClass.length; i++) {
+			materialEl.classList.add(elementData.cssClass[i]);
+		}
+	}
+	if(typeof(elementData.innerHTML) !== 'undefined') {
+		materialEl.innerHTML = elementData.innerHTML;
+	}
+	if(typeof(elementData.clickFunc) === 'function') {
+		materialEl.addEventListener('click', function(e) {
+			e.stopPropagation();
+			elementData.clickFunc(elementData.dataInfo);
+		}, false);
+	}
+	if(typeof(elementData.clickTag) !== 'undefined') {
+		materialEl.addEventListener('click', function(e) {
+			e.stopPropagation();
+			InnityHTMLAd.click({clickTAG:(elementData.clickTag)});
+			c262255_pauseVideo();
+		}, false);
+	}
+	if(typeof(elementData.cssStyle) !== 'undefined' && typeof(elementData.cssStyle) === 'object') {
+		for(var cssKey in elementData.cssStyle) {
+			materialEl.style[cssKey] = elementData.cssStyle[cssKey];
+		}
+	}
+	if(typeof(elementData.attrs) !== 'undefined' && typeof(elementData.attrs) === 'object') {
+		for(var attrName in elementData.attrs) {
+			materialEl.setAttribute(attrName, elementData.attrs[attrName]);
+		}
+	}
+	if(typeof(elementData.childs) !== 'undefined' && typeof(elementData.childs) === 'object') {
+		for (var i = 0; i < elementData.childs.length; i++) {
+			generateMaterial(elementData.childs[i], materialEl);
+		}
+	}
+	container.appendChild(materialEl);
+};
